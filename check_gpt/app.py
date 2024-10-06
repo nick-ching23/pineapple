@@ -61,6 +61,9 @@ def execute_gpt_comparsion(original_text:str) -> bool:
     print(f"Result: {answer}")
     return result
 
+@app.route('/')
+def index():
+    return "Hello, welcome to Veritas!"
 
 # Flask route for executing the GPT comparison
 @app.route('/api/check-text', methods=['POST'])
