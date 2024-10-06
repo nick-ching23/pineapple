@@ -20,7 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
@@ -69,7 +69,7 @@ public class VeritasControllerTests {
     Mockito.<ResponseEntity<?>>when(veritasService.checkTextUser(anyString(), anyString(), anyString()))
         .thenReturn(response);
 
-    mockMvc.perform(patch("/checkTextUser")
+    mockMvc.perform(post("/checkTextUser")
             .param("text", "Sample text")
             .param("orgID", "Sample text")
             .param("userID", "Sample text"))
@@ -83,7 +83,7 @@ public class VeritasControllerTests {
     Mockito.<ResponseEntity<?>>when(veritasService.numFlags(anyString(), anyString()))
         .thenReturn(response);
 
-    mockMvc.perform(patch("/numFlags")
+    mockMvc.perform(get("/numFlags")
             .param("orgID", "Sample text")
             .param("userID", "Sample text"))
         .andExpect(status().isOk())
