@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.HashMap;
 
+@Service
 public class VeritasService {
   @Autowired
   RecordMapper recordMapper;
