@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: user
+    name: veritas
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
