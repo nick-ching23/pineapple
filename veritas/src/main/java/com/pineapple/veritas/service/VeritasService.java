@@ -18,7 +18,7 @@ public class VeritasService {
 
   public ResponseEntity<?> checkText(String text) {
     //This should be calling the OpenAI API, change return val
-    return new ResponseEntity<>(null, HttpStatus.OK);
+    return new ResponseEntity<>(0, HttpStatus.OK);
   }
 
   public ResponseEntity<?> checkTextUser(String text, String userID, String orgID) {
