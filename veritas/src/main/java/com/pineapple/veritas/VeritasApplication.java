@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.pineapple.veritas.entity")
+@MapperScan("com.pineapple.veritas.mapper")
 public class VeritasApplication {
 
   public static void main(String[] args) {
