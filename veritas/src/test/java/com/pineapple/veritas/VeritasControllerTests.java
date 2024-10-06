@@ -2,12 +2,15 @@ package com.pineapple.veritas;
 
 import com.pineapple.veritas.controller.VeritasController;
 import com.pineapple.veritas.service.VeritasService;
+import com.pineapple.veritas.mapper.RecordMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,13 +28,18 @@ import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 
 @WebMvcTest(VeritasController.class)
 @AutoConfigureMockMvc
-@Import(VeritasService.class)
 public class VeritasControllerTests {
   @Autowired
   private MockMvc mockMvc;
 
   @MockBean
   private VeritasService veritasService;
+
+  @MockBean
+  private RecordMapper recordMapper;
+
+  @MockBean
+  private SqlSessionTemplate sqlSessionTemplate;
 
   @Test
   public void welcomeTest() throws Exception {
