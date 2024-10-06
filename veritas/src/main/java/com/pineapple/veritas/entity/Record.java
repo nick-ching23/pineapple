@@ -1,5 +1,6 @@
 package com.pineapple.veritas.entity;
 
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 

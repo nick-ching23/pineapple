@@ -7,7 +7,7 @@ spring:
   application:
     name: user
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://35.184.107.37:3306/records
+    username: root
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
