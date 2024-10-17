@@ -3,9 +3,14 @@ package com.pineapple.veritas.controller;
 import com.pineapple.veritas.service.VeritasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Route controller for the Veritas service.
+ */
 @RestController
 public class VeritasController {
   private final VeritasService veritasService;
@@ -26,12 +31,13 @@ public class VeritasController {
   }
 
   @PostMapping({"/checkTextUser"})
-  public ResponseEntity<?> checkTextUser(@RequestParam String text, @RequestParam String userID, @RequestParam String orgID) {
-    return veritasService.checkTextUser(text, userID, orgID);
+  public ResponseEntity<?> checkTextUser(@RequestParam String text, @RequestParam String userId,
+                                         @RequestParam String orgId) {
+    return veritasService.checkTextUser(text, userId, orgId);
   }
 
   @GetMapping({"/numFlags"})
-  public ResponseEntity<?> numFlags(@RequestParam String userID, @RequestParam String orgID) {
-    return veritasService.numFlags(userID, orgID);
+  public ResponseEntity<?> numFlags(@RequestParam String userId, @RequestParam String orgId) {
+    return veritasService.numFlags(userId, orgId);
   }
 }
