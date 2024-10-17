@@ -100,8 +100,8 @@ public class VeritasService {
     Boolean flagged = textRes.getBody();
 
     Map<String, Object> recordMap = new HashMap<>();
-    recordMap.put("orgId", orgId);
-    recordMap.put("userId", userId);
+    recordMap.put("orgID", orgId);
+    recordMap.put("userID", userId);
     List<Record> records = recordMapper.selectByMap(recordMap);
     if (records.isEmpty()) {
       Record record = new Record();
@@ -130,8 +130,8 @@ public class VeritasService {
    */
   public ResponseEntity<?> numFlags(String userId, String orgId) {
     Map<String, Object> recordMap = new HashMap<>();
-    recordMap.put("orgId", orgId);
-    recordMap.put("userId", userId);
+    recordMap.put("orgID", orgId);
+    recordMap.put("userID", userId);
     List<Record> records = recordMapper.selectByMap(recordMap);
     if (records.isEmpty()) {
       return new ResponseEntity<>(0, HttpStatus.OK);
