@@ -4,9 +4,14 @@ import com.pineapple.veritas.service.VeritasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Route controller for the Veritas service.
+ */
 @RestController
 public class VeritasController {
   private final VeritasService veritasService;
