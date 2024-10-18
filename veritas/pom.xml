@@ -112,7 +112,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>vgigalidate</id>
+                        <id>validate</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>check</goal>

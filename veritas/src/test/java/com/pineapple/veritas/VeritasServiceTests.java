@@ -149,7 +149,7 @@ public class VeritasServiceTests {
     assertEquals("Operation completed successfully", response.getBody());
 
     checkTextResponse = new CheckTextResponse();
-    checkTextResponse.setResult(false);
+    checkTextResponse.setResult(true);
 
     monoResponse = Mono.just(checkTextResponse);
 
@@ -165,7 +165,6 @@ public class VeritasServiceTests {
   public void testCheckTextUserOld() {
     CheckTextResponse checkTextResponse = new CheckTextResponse();
     checkTextResponse.setResult(true);
-
     Mono<CheckTextResponse> monoResponse = Mono.just(checkTextResponse);
     when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
 
@@ -178,8 +177,16 @@ public class VeritasServiceTests {
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Operation completed successfully", response.getBody());
-
     verify(recordMapper).updateByCompositeKey(eq("Some User"), eq("Some Org"), eq(2));
+
+    checkTextResponse = new CheckTextResponse();
+    checkTextResponse.setResult(false);
+    monoResponse = Mono.just(checkTextResponse);
+    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
+
+    response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals("Operation completed successfully", response.getBody());
   }
 
   @Test
