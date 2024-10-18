@@ -54,6 +54,10 @@ Veritas's Service utilizes a modular microservice design:
 ## **Running a cloud-based instance** 
 
 
+## **Interacting with our service through postman**
+
+In its current form, 
+
 ## **Service Endpoint Descriptions**
 
 
