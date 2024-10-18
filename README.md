@@ -47,19 +47,14 @@ Veritas's Service utilizes a modular microservice design:
 5. Intellij: Note that this project was built using Intellij IDEA, but it should work with any Java-compatible IDE. 
 
 
-## **Building and Running a local instance** 
+## **How to build our project** 
+// what we need to run, compile and run our program locally 
 
+## **Interacting with our service**
+// what URL + port etc. we need to interact with the API 
 
-
-## **Running a cloud-based instance** 
-
-
-## **Interacting with our service through postman**
-
-In its current form, 
 
 ## **Service Endpoint Descriptions**
-
 
 <details>
 <summary>GET: /</summary>
@@ -95,8 +90,16 @@ In its current form,
 ## **Running Tests**
 
 
-
 ## **Style Check Report** 
 
 
 ## **Branch Coverage Reporting**
+
+
+## **Tools used** 
+
+
+## **Third Party API Documentation**
+- OpenAI API
+- GCP
+
