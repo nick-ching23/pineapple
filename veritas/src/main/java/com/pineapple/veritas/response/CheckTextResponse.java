@@ -9,4 +9,6 @@ public class CheckTextResponse {
   public Boolean getResult() {
     return result;
   }
+
+  public void setResult(boolean res) { result = res;}
 }
