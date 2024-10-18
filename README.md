@@ -20,8 +20,20 @@ Veritas is a lightweight and flexible service that abstracts the task of detecti
 
 ---
 
+## **Vertias Architecture**
+
+![Blank diagram (2)](https://github.com/user-attachments/assets/bc7b328e-5428-48c5-be8a-d493eaf83da6)
+
+
+Veritas's Service utilizes a modular microservice design:
+- Java Springboot API Handler: controls all business service logic, handling interactions with the ML model and our persistent storage
+- Python ML microservice: this microservice is solely responsible for detecting AI-generated text. It is deployed on a separate GCP VM so and interacted with through HTTP
+- Cloud SQL on GCP: The final component of our service is persistent storage, hosted on GCP. 
+
+
+
 ## **Project Requirements** 
-1. Java Development Kit (JDK): Version 11 or later
+1. Java Development Kit (JDK): Version 17 or later
    - Ensure that javac and java are installed and properly configured in your system's PATH.
    - you can verify this by running javac --version and java-version
 
@@ -29,14 +41,10 @@ Veritas is a lightweight and flexible service that abstracts the task of detecti
    - Maven should be installed and accessible via the CLI
    - you can verify this by running mvn --version
   
-3. Bash Shell: For running test scripts to view results of testing lexical analyzer
-   - On macOS and Linux, bash is pre-installed.
-   - For Windows, you may need to install Git Bash or use Windows Subsystem for Linux (WSL).
+4. Python 3.11 or later: For deploying the Veritas microservice:
+   - You can check your version using python3 --version
   
-4. Intellij: Note that this project was built using Intellij IDEA, but it should work with any Java-compatible IDE. 
-
-
-
+5. Intellij: Note that this project was built using Intellij IDEA, but it should work with any Java-compatible IDE. 
 
 
 ## **Building and Running a local instance** 
