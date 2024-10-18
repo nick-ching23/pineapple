@@ -2,12 +2,10 @@ package com.pineapple.veritas.service;
 
 import com.pineapple.veritas.entity.Record;
 import com.pineapple.veritas.mapper.RecordMapper;
-
-import java.net.URI;
-import java.util.List;
-
 import com.pineapple.veritas.response.CheckTextResponse;
+import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,7 +107,8 @@ public class VeritasService {
     } else if (Boolean.TRUE.equals(flagged)) {
       Record record = records.get(0);
       record.setNumFlags(record.getNumFlags() + 1);
-      recordMapper.updateByCompositeKey(record.getUserId(), record.getOrgId(), record.getNumFlags());
+      recordMapper.updateByCompositeKey(record.getUserId(),
+          record.getOrgId(), record.getNumFlags());
     }
     return new ResponseEntity<>("Operation completed successfully", HttpStatus.OK);
   }

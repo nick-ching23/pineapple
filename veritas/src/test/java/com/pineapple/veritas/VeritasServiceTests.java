@@ -1,23 +1,24 @@
 package com.pineapple.veritas;
 
-import com.pineapple.veritas.mapper.RecordMapper;
-import com.pineapple.veritas.entity.Record;
-import com.pineapple.veritas.service.VeritasService;
-import com.pineapple.veritas.response.CheckTextResponse;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.pineapple.veritas.entity.Record;
+import com.pineapple.veritas.mapper.RecordMapper;
+import com.pineapple.veritas.response.CheckTextResponse;
+import com.pineapple.veritas.service.VeritasService;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +31,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+/**
+ * This class contains unit tests for the VeritasService class.
+ */
 @SpringBootTest
 @ContextConfiguration
 @TestPropertySource(properties = "external.api.url=http://mocked-url")
@@ -61,6 +65,9 @@ public class VeritasServiceTests {
   @Mock
   private WebClient.ResponseSpec responseSpec;
 
+  /**
+   * Sets up the mocking pipeline for every step of the client request.
+   */
   @BeforeEach
   public void setUp() {
     requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
