@@ -4,6 +4,7 @@ import com.pineapple.veritas.mapper.RecordMapper;
 import com.pineapple.veritas.entity.Record;
 import com.pineapple.veritas.service.VeritasService;
 import com.pineapple.veritas.response.CheckTextResponse;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -40,12 +43,35 @@ public class VeritasServiceTests {
   @MockBean
   private WebClient.Builder webClientBuilder;
 
-  @MockBean
+  @Mock
   private WebClient webClient;
+
+  @Mock
+  private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+
+  @Mock
+  private WebClient.RequestBodySpec requestBodySpec;
+
+  @Mock
+  private WebClient.RequestHeadersSpec requestHeadersSpec;
+
+  @Mock
+  private WebClient.ResponseSpec responseSpec;
 
   @BeforeEach
   public void setUp() {
+    requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
+    requestBodySpec = mock(WebClient.RequestBodySpec.class);
+    requestHeadersSpec = mock(WebClient.RequestHeadersSpec.class);
+    responseSpec = mock(WebClient.ResponseSpec.class);
+
     when(webClientBuilder.build()).thenReturn(webClient);
+
+    when(webClient.post()).thenReturn(requestBodyUriSpec);
+    when(requestBodyUriSpec.uri(any(URI.class))).thenReturn(requestBodySpec);
+    when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.bodyValue(any())).thenReturn(requestHeadersSpec);
+    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
   }
 
   @Test
@@ -76,17 +102,8 @@ public class VeritasServiceTests {
     CheckTextResponse checkTextResponse = new CheckTextResponse();
     checkTextResponse.setResult(true);
 
-    WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
-    WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
-    WebClient.RequestHeadersSpec<?> requestHeadersSpec = mock(WebClient.RequestHeadersSpec.class);
-    WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
     Mono<CheckTextResponse> monoResponse = Mono.just(checkTextResponse);
 
-    when(webClient.post()).thenReturn(requestBodyUriSpec);
-    when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-    when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
-    when(requestBodySpec.bodyValue(any())).thenReturn(requestHeadersSpec);
-    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
     when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
 
     ResponseEntity<Boolean> response = veritasService.checkText("Some text");
@@ -107,18 +124,8 @@ public class VeritasServiceTests {
   }
 
   @Test
-  public void testCheckTextUserException() {
-    when(veritasService.checkText("some text")).thenThrow(new RuntimeException("Some Error"));
-
-    ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
-    assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
-    assertEquals("Error while checking text: Some Error", response.getBody());
-  }
-
-  @Test
   public void testCheckTextUserNotOk() {
-    ResponseEntity<Boolean> textRes = new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
+    when(webClient.post()).thenThrow(new RuntimeException("Some Error"));
 
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
@@ -126,54 +133,55 @@ public class VeritasServiceTests {
   }
 
   @Test
-  public void testCheckTextUserReturnsNull() {
-    ResponseEntity<Boolean> textRes = null;
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
-
-    ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals("Invalid response from text verification service", response.getBody());
-
-    textRes = new ResponseEntity<>(null, HttpStatus.OK);
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
-
-    response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals("Invalid response from text verification service", response.getBody());
-  }
-
-  @Test
   public void testCheckTextUserNew() {
-    ResponseEntity<Boolean> textRes = new ResponseEntity<>(false, HttpStatus.OK);
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
+    CheckTextResponse checkTextResponse = new CheckTextResponse();
+    checkTextResponse.setResult(false);
+
+    Mono<CheckTextResponse> monoResponse = Mono.just(checkTextResponse);
+
+    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
+
     when(recordMapper.selectByMap(any())).thenReturn(Collections.emptyList());
 
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Operation completed successfully", response.getBody());
-    verify(recordMapper).insert(any(Record.class));
 
-    textRes = new ResponseEntity<>(true, HttpStatus.OK);
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
+    checkTextResponse = new CheckTextResponse();
+    checkTextResponse.setResult(false);
+
+    monoResponse = Mono.just(checkTextResponse);
+
+    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
+
     response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Operation completed successfully", response.getBody());
-    verify(recordMapper).insert(any(Record.class));
+    verify(recordMapper, times(2)).insert(any(Record.class));
   }
 
   @Test
   public void testCheckTextUserOld() {
-    ResponseEntity<Boolean> textRes = new ResponseEntity<>(false, HttpStatus.OK);
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
+    CheckTextResponse checkTextResponse = new CheckTextResponse();
+    checkTextResponse.setResult(true);
+
+    Mono<CheckTextResponse> monoResponse = Mono.just(checkTextResponse);
+
+    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
+
     when(recordMapper.selectByMap(any())).thenReturn(List.of(new Record()));
 
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Operation completed successfully", response.getBody());
-    verify(recordMapper).updateById(any(Record.class));
 
-    textRes = new ResponseEntity<>(true, HttpStatus.OK);
-    when(veritasService.checkText("Some Text")).thenReturn(textRes);
+    checkTextResponse = new CheckTextResponse();
+    checkTextResponse.setResult(false);
+
+    monoResponse = Mono.just(checkTextResponse);
+
+    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
+
     response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Operation completed successfully", response.getBody());

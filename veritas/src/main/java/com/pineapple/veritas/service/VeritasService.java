@@ -2,6 +2,10 @@ package com.pineapple.veritas.service;
 
 import com.pineapple.veritas.entity.Record;
 import com.pineapple.veritas.mapper.RecordMapper;
+
+import java.net.URI;
+import java.util.List;
+
 import com.pineapple.veritas.response.CheckTextResponse;
 import java.util.HashMap;
 import java.util.List;
@@ -48,13 +52,14 @@ public class VeritasService {
     try {
       Boolean response = webClient
           .post()
-          .uri(apiCall)
+          .uri(URI.create(apiCall))
           .header("Content-Type", "application/json")
           .bodyValue(Map.of("text", text))
           .retrieve()
           .bodyToMono(CheckTextResponse.class)
           .map(CheckTextResponse::getResult)
           .block();
+      System.out.println("After sending request to model");
       return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (WebClientResponseException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -81,20 +86,10 @@ public class VeritasService {
       return new ResponseEntity<>("OrgID cannot be null or empty", HttpStatus.BAD_REQUEST);
     }
     ResponseEntity<Boolean> textRes;
-    try {
-      textRes = (ResponseEntity<Boolean>) checkText(text);
-    } catch (Exception e) {
-      return new ResponseEntity<>("Error while checking text: " + e.getMessage(),
-              HttpStatus.SERVICE_UNAVAILABLE);
-    }
+    textRes = (ResponseEntity<Boolean>) checkText(text);
 
     if (textRes.getStatusCode() != HttpStatus.OK) {
       return new ResponseEntity<>("Error while checking text", textRes.getStatusCode());
-    }
-
-    if (textRes == null || textRes.getBody() == null) {
-      return new ResponseEntity<>("Invalid response from text verification service",
-              HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     Boolean flagged = textRes.getBody();
