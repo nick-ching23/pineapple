@@ -59,7 +59,6 @@ public class VeritasService {
           .bodyToMono(CheckTextResponse.class)
           .map(CheckTextResponse::getResult)
           .block();
-      System.out.println("After sending request to model");
       return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (WebClientResponseException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -121,7 +120,7 @@ public class VeritasService {
     } else if (Boolean.TRUE.equals(flagged)) {
       Record record = records.get(0);
       record.setNumFlags(record.getNumFlags() + 1);
-      recordMapper.updateById(record);
+      recordMapper.updateByCompositeKey(record.getUserId(), record.getOrgId(), record.getNumFlags());
     }
     return new ResponseEntity<>("Operation completed successfully", HttpStatus.OK);
   }
