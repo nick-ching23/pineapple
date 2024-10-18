@@ -1,6 +1,6 @@
 <h1 align="center">Veritas: A lightweight Generative AI detection service</h1>
 <p align="center">
-Collaborators: Nick Ching (nc2935), Naren Loganathan (nl2878), 
+Collaborators: Nick Ching (nc2935), Naren Loganathan (nl2878), Suwei Ma (sm5011), Avery Fan (mf3332)
   
 Contributions
 [Trello link](https://trello.com/invite/b/6702d91258eab0e42ba8174c/ATTId2e43923e75399a4283c25456224c3a27CF0F058/pineapple-veritas)
