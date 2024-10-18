@@ -2,6 +2,7 @@ package com.pineapple.veritas.controller;
 
 import com.pineapple.veritas.service.VeritasService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,17 +28,33 @@ public class VeritasController {
 
   @GetMapping({"/checkText"})
   public ResponseEntity<?> checkText(@RequestParam String text) {
-    return veritasService.checkText(text);
+    try {
+      return veritasService.checkText(text);
+    } catch (Exception e) {
+      return handleException(e);
+    }
   }
 
   @PostMapping({"/checkTextUser"})
-  public ResponseEntity<?> checkTextUser(@RequestParam String text, @RequestParam String userId,
-                                         @RequestParam String orgId) {
-    return veritasService.checkTextUser(text, userId, orgId);
+  public ResponseEntity<?> checkTextUser(@RequestParam String text, @RequestParam String userID, @RequestParam String orgID) {
+    try {
+      return veritasService.checkTextUser(text, userID, orgID);
+    } catch (Exception e) {
+      return handleException(e);
+    }
   }
 
   @GetMapping({"/numFlags"})
-  public ResponseEntity<?> numFlags(@RequestParam String userId, @RequestParam String orgId) {
-    return veritasService.numFlags(userId, orgId);
+  public ResponseEntity<?> numFlags(@RequestParam String userID, @RequestParam String orgID) {
+    try {
+      return veritasService.numFlags(userID, orgID);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  private ResponseEntity<?> handleException(Exception e) {
+    System.out.println(e.toString());
+    return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

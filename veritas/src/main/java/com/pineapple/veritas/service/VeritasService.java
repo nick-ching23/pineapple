@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.pineapple.veritas.response.CheckTextResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,20 +84,10 @@ public class VeritasService {
       return new ResponseEntity<>("OrgID cannot be null or empty", HttpStatus.BAD_REQUEST);
     }
     ResponseEntity<Boolean> textRes;
-    try {
-      textRes = (ResponseEntity<Boolean>) checkText(text);
-    } catch (Exception e) {
-      return new ResponseEntity<>("Error while checking text: " + e.getMessage(),
-              HttpStatus.SERVICE_UNAVAILABLE);
-    }
+    textRes = (ResponseEntity<Boolean>) checkText(text);
 
     if (textRes.getStatusCode() != HttpStatus.OK) {
       return new ResponseEntity<>("Error while checking text", textRes.getStatusCode());
-    }
-
-    if (textRes == null || textRes.getBody() == null) {
-      return new ResponseEntity<>("Invalid response from text verification service",
-              HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     Boolean flagged = textRes.getBody();
