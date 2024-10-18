@@ -25,12 +25,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
 @ContextConfiguration
+@TestPropertySource(properties = "external.api.url=http://mocked-url")
 public class VeritasServiceTests {
   @Autowired
   private VeritasService veritasService;
