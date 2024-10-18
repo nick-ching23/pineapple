@@ -92,9 +92,16 @@ Veritas's Service utilizes a modular microservice design:
 
 ## **Style Check Report** 
 
+We used the tool "checkstyle" to check the style of our code and generate style checking reports. Here is the report
+as of the day of 10/18/2024 (These can be found in the reports folder):
+
+![Checkstyle](reports/checkstyle_10182024.png)
 
 ## **Branch Coverage Reporting**
 
+We used JaCoCo to perform branch analysis in order to see the branch coverage of the relevant code within the code base. See below for screenshots demonstrating output.
+
+![Screenshot of a code coverage report from the plugin](reports/jacoco.png)
 
 ## **Tools used** 
 
