@@ -2,6 +2,10 @@ package com.pineapple.veritas.service;
 
 import com.pineapple.veritas.entity.Record;
 import com.pineapple.veritas.mapper.RecordMapper;
+
+import java.net.URI;
+import java.util.List;
+
 import com.pineapple.veritas.response.CheckTextResponse;
 import java.util.HashMap;
 import java.util.List;
@@ -48,13 +52,14 @@ public class VeritasService {
     try {
       Boolean response = webClient
           .post()
-          .uri(apiCall)
+          .uri(URI.create(apiCall))
           .header("Content-Type", "application/json")
           .bodyValue(Map.of("text", text))
           .retrieve()
           .bodyToMono(CheckTextResponse.class)
           .map(CheckTextResponse::getResult)
           .block();
+      System.out.println("After sending request to model");
       return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (WebClientResponseException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
