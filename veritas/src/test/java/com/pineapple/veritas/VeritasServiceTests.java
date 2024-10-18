@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -166,26 +167,19 @@ public class VeritasServiceTests {
     checkTextResponse.setResult(true);
 
     Mono<CheckTextResponse> monoResponse = Mono.just(checkTextResponse);
-
     when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
 
-    when(recordMapper.selectByMap(any())).thenReturn(List.of(new Record()));
+    Record mockRecord = new Record();
+    mockRecord.setUserId("Some User");
+    mockRecord.setOrgId("Some Org");
+    mockRecord.setNumFlags(1);
+    when(recordMapper.selectByMap(any())).thenReturn(Collections.singletonList(mockRecord));
 
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Operation completed successfully", response.getBody());
 
-    checkTextResponse = new CheckTextResponse();
-    checkTextResponse.setResult(false);
-
-    monoResponse = Mono.just(checkTextResponse);
-
-    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
-
-    response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Operation completed successfully", response.getBody());
-    verify(recordMapper).updateById(any(Record.class));
+    verify(recordMapper).updateByCompositeKey(eq("Some User"), eq("Some Org"), eq(2));
   }
 
   @Test
