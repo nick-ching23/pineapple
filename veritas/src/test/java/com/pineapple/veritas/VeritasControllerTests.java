@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,8 +58,9 @@ public class VeritasControllerTests {
     Mockito.<ResponseEntity<?>>when(veritasService.checkText(anyString()))
         .thenReturn(response);
 
-    mockMvc.perform(get("/checkText")
-            .param("text", "Sample text"))
+    mockMvc.perform(post("/checkText")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("\"Sample text\""))
         .andExpect(status().isOk())
         .andExpect(content().string("1"));
   }
@@ -70,7 +72,8 @@ public class VeritasControllerTests {
             anyString(), anyString())).thenReturn(response);
 
     mockMvc.perform(post("/checkTextUser")
-            .param("text", "Sample text")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("\"Sample text\"")
             .param("orgId", "Sample text")
             .param("userId", "Sample text"))
         .andExpect(status().isOk())
@@ -95,8 +98,9 @@ public class VeritasControllerTests {
     when(veritasService.checkText(anyString()))
         .thenThrow(new RuntimeException("TestException"));
 
-    mockMvc.perform(get("/checkText")
-            .param("text", "Sample text"))
+    mockMvc.perform(post("/checkText")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("\"Sample text\""))
         .andExpect(status().isInternalServerError())
         .andExpect(content().string("An error has occurred"));
   }
