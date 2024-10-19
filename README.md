@@ -55,7 +55,7 @@ Veritas's Service utilizes a modular microservice design:
 
 ## **Interacting with our service**
  - Endpoint information is described in the next section. We use Postman to craft our requests and point it at the URL we obtain when we start up Veritas.
- - At the moment, we have our service running on a GCP VM. Paste [http://34.66.164.124:8080]() in your browser to see 'Welcome to Veritas!'. You can use the endpoint descriptions to make other types of requests.
+ - At the moment, we have our service running on a GCP VM. Paste [http://34.66.164.124:8080](http://34.66.164.124:8080) in your browser to see 'Welcome to Veritas!'. You can use the endpoint descriptions to make other types of requests.
 
 ## **Service Endpoint Descriptions**
 
