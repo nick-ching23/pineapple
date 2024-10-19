@@ -2,8 +2,7 @@
 <p align="center">
 Collaborators: Nick Ching (nc2935), Naren Loganathan (nl2878), Suwei Ma (sm5011), Avery Fan (mf3332)
   
-Contributions
-[Trello link](https://trello.com/invite/b/6702d91258eab0e42ba8174c/ATTId2e43923e75399a4283c25456224c3a27CF0F058/pineapple-veritas)
+Contributions + Tasks: [Trello Board](https://trello.com/invite/b/6702d91258eab0e42ba8174c/ATTId2e43923e75399a4283c25456224c3a27CF0F058/pineapple-veritas)
 
 </p>
 
@@ -47,11 +46,16 @@ Veritas's Service utilizes a modular microservice design:
 5. Intellij: Note that this project was built using Intellij IDEA, but it should work with any Java-compatible IDE. 
 
 
-## **How to build our project** 
-// what we need to run, compile and run our program locally 
+## **How to build our project**
+ - Clone the GitHub repo, open the `veritas` directory in IntelliJ, run the default generated run configuration for `VeritasApplication` from the IDE.
+ - Tests can be run (`mvn test`) without the extra DB/flask server setup (since we mock). Check `application.yaml` for the additional env vars required otherwise.
+ - Set up a MySQL database (we use Cloud SQL), set the `DB_URL`, `DB_USERNAME` and `DB_PASSWORD` environment variables accordingly.
+ - **ML Microservice:** Create a python3 venv (we did this on a separate GCP VM) `python3 -m venv <env-name>`, run `pip install -r requirements.txt` from the `check-gpt` directory and start up the flask server by running `python3 app.py`.
+ - Get the URL for the server and set the `MODEL_MICROSERVICE_URL` env var accordingly.
 
 ## **Interacting with our service**
-// what URL + port etc. we need to interact with the API 
+ - Endpoint information is described in the next section. We use Postman to craft our requests and point it at the URL we obtain when we start up Veritas.
+ - At the moment, we have our service running on a GCP VM. Paste [http://34.66.164.124:8080]() in your browser to see 'Welcome to Veritas!'. You can use the endpoint descriptions to make other types of requests.
 
 ## **Service Endpoint Descriptions**
 
@@ -89,7 +93,6 @@ or the underlying checkText call errs out)</li>
   <li>Expected Output: HTTP OK, with the number of flags (int)</li>
 </details>
 
-
 ## **Running Tests**
 Run `mvn test` on the command line from the `veritas` directory. As of now, this runs 18 tests with high branch coverage. We have 3 suites of unit tests for the `VeritasController`, `VeritasRecord` and `VeritasService` classes.
 
@@ -107,10 +110,17 @@ We used JaCoCo to perform branch analysis in order to see the branch coverage of
 
 ![Screenshot of a code coverage report from the plugin](reports/jacoco.png)
 
-## **Tools used** 
+## **Tools used**
 
+ - Maven
+ - GitHub Actions CI: Current workflow runs a Maven build + tests to make sure pushed code doesn't break
+ - Checkstyle: Style checking
+ - JUnit: Unit testing
+ - Mybatis Mapper: Allows us to perform SQL queries by specifying a Java map.
+ - JaCoCo: Code coverage report generation
+ - Postman: API testing
 
-## **Third Party API Documentation**
-- OpenAI API
-- GCP
+## **Third Party Services**
+- [OpenAI API](https://platform.openai.com/docs/guides/text-generation)
+- [GCP](https://cloud.google.com/)
 
