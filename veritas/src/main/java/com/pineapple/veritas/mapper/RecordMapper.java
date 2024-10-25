@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Update;
 public interface RecordMapper extends BaseMapper<Record> {
 
   @Update("UPDATE records SET numFlags = #{numFlags} WHERE orgID = #{orgId} AND userID = #{userId}")
-  int updateByCompositeKey(@Param("orgId") String orgId,
-                           @Param("userId") String userId,
+  int updateByCompositeKey(@Param("userId") String userId,
+                           @Param("orgId") String orgId,
                            @Param("numFlags") int numFlags);
 }
