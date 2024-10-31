@@ -50,7 +50,7 @@ def rewrite_text(original_text:str):
 
 
 # Function to analyze texts based on Levenshtein ratio
-def analyze_texts(original_text: str, ratio_threshold=0.6)-> bool:
+def analyze_texts(original_text: str, ratio_threshold=0.65)-> bool:
     """
     Return True if written by a human 
     Return False if written by ChatGPT
