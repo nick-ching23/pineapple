@@ -145,8 +145,12 @@ public class VeritasService {
     if (orgs.isEmpty()) {
       return new ResponseEntity<>("User or Password Incorrect", HttpStatus.BAD_REQUEST);
     }
-    timestampMap.put(loginRequest.getOrgId(), Instant.now());
+    updateTimestamp(loginRequest.getOrgId());
     return new ResponseEntity<>(orgs.get(0), HttpStatus.OK);
+  }
+
+  public void updateTimestamp(String orgId) {
+    timestampMap.put(orgId, Instant.now());
   }
 
   public boolean checkRegistered(String orgId) {

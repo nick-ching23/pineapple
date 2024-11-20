@@ -25,7 +25,7 @@ public class VeritasController {
   private final VeritasService veritasService;
 
   @Autowired
-  public VeritasController(VeritasService veritasService, OrganizationMapper organizationMapper) {
+  public VeritasController(VeritasService veritasService) {
     this.veritasService = veritasService;
   }
 
@@ -73,6 +73,7 @@ public class VeritasController {
       if (!veritasService.isTimeStampValid(orgId)) {
         return new ResponseEntity<> ("Session expired, please login again", HttpStatus.OK);
       }
+      veritasService.updateTimestamp(orgId);
       return veritasService.checkTextUser(text, userId, orgId);
     } catch (Exception e) {
       return handleException(e);
@@ -97,6 +98,7 @@ public class VeritasController {
       if (!veritasService.isTimeStampValid(orgId)) {
         return new ResponseEntity<> ("Session expired, please login again", HttpStatus.OK);
       }
+      veritasService.updateTimestamp(orgId);
       return veritasService.numFlags(userId, orgId);
     } catch (Exception e) {
       return handleException(e);
