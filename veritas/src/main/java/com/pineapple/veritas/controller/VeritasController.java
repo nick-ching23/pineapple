@@ -1,5 +1,8 @@
 package com.pineapple.veritas.controller;
 
+import com.pineapple.veritas.entity.Organization;
+import com.pineapple.veritas.mapper.OrganizationMapper;
+import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.service.VeritasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Route controller for the Veritas service.
  */
@@ -18,7 +25,7 @@ public class VeritasController {
   private final VeritasService veritasService;
 
   @Autowired
-  public VeritasController(VeritasService veritasService) {
+  public VeritasController(VeritasService veritasService, OrganizationMapper organizationMapper) {
     this.veritasService = veritasService;
   }
 
@@ -59,6 +66,13 @@ public class VeritasController {
                                          @RequestParam String userId,
                                          @RequestParam String orgId) {
     try {
+      if (!veritasService.checkRegistered(orgId)) {
+        return new ResponseEntity<> ("Please register first", HttpStatus.OK);
+      }
+
+      if (!veritasService.isTimeStampValid(orgId)) {
+        return new ResponseEntity<> ("Session expired, please login again", HttpStatus.OK);
+      }
       return veritasService.checkTextUser(text, userId, orgId);
     } catch (Exception e) {
       return handleException(e);
@@ -76,10 +90,31 @@ public class VeritasController {
   public ResponseEntity<?> numFlags(@RequestParam String userId,
                                     @RequestParam String orgId) {
     try {
+      if (!veritasService.checkRegistered(orgId)) {
+        return new ResponseEntity<> ("Please register first", HttpStatus.OK);
+      }
+
+      if (!veritasService.isTimeStampValid(orgId)) {
+        return new ResponseEntity<> ("Session expired, please login again", HttpStatus.OK);
+      }
       return veritasService.numFlags(userId, orgId);
     } catch (Exception e) {
       return handleException(e);
     }
+  }
+
+  @PostMapping("/register")
+  public ResponseEntity<?> register(@RequestBody LoginRequest loginRequest) {
+    try {
+      return veritasService.register(loginRequest);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    return veritasService.login(loginRequest);
   }
 
   private ResponseEntity<?> handleException(Exception e) {

@@ -1,9 +1,13 @@
 package com.pineapple.veritas.service;
 
+import com.pineapple.veritas.entity.Organization;
 import com.pineapple.veritas.entity.Record;
+import com.pineapple.veritas.mapper.OrganizationMapper;
 import com.pineapple.veritas.mapper.RecordMapper;
+import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.response.CheckTextResponse;
 import java.net.URI;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,11 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class VeritasService {
   @Autowired
   RecordMapper recordMapper;
+
+  @Autowired
+  OrganizationMapper orgMapper;
+
+  private final Map<String, Instant> timestampMap = new HashMap<>();
 
   @Autowired
   private WebClient.Builder webClientBuilder;
@@ -118,5 +127,49 @@ public class VeritasService {
     } else {
       return new ResponseEntity<>(records.size(), HttpStatus.OK);
     }
+  }
+
+  public ResponseEntity<?> register(LoginRequest loginRequest) {
+    Organization org = new Organization();
+    org.setOrgId(loginRequest.getOrgId());
+    org.setPassword(loginRequest.getPassword());
+    orgMapper.insert(org);
+    return new ResponseEntity<>("Successfully registered", HttpStatus.OK);
+  }
+
+  public ResponseEntity<?> login(LoginRequest loginRequest) {
+    Map<String, Object> loginMap = new HashMap<>();
+    loginMap.put("orgId", loginRequest.getOrgId());
+    loginMap.put("password", loginRequest.getPassword());
+    List<Organization> orgs = orgMapper.selectByMap(loginMap);
+    if (orgs.isEmpty()) {
+      return new ResponseEntity<>("User or Password Incorrect", HttpStatus.BAD_REQUEST);
+    }
+    timestampMap.put(loginRequest.getOrgId(), Instant.now());
+    return new ResponseEntity<>(orgs.get(0), HttpStatus.OK);
+  }
+
+  public boolean checkRegistered(String orgId) {
+    Map<String, Object> loginMap = new HashMap<>();
+    loginMap.put("orgId", orgId);
+    List<Organization> orgs = orgMapper.selectByMap(loginMap);
+    return !orgs.isEmpty();
+  }
+
+  public boolean isTimeStampValid(String orgId) {
+    Instant lastLogin = timestampMap.get(orgId);
+    if (lastLogin == null) {
+      return false;
+    }
+
+    Instant now = Instant.now();
+    long hoursElapsed = java.time.Duration.between(lastLogin, now).toHours();
+
+    if (hoursElapsed >= 24) {
+      timestampMap.remove(orgId);
+      return false;
+    }
+
+    return true;
   }
 }
