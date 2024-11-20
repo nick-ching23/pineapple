@@ -105,9 +105,16 @@ public class VeritasService {
       record.setUserId(userId);
       record.setOrgId(orgId);
       recordMapper.insert(record);
+      return ResponseEntity.ok(Map.of(
+          "flagged", true,
+          "message", "Text has been flagged and recorded."
+      ));
+    } else {
+      return ResponseEntity.ok(Map.of(
+          "flagged", false,
+          "message", "Text is not flagged."
+      ));
     }
-
-    return new ResponseEntity<>("Operation completed successfully", HttpStatus.OK);
   }
 
   /**
