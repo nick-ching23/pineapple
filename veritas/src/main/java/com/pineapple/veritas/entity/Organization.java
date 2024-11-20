@@ -1,6 +1,5 @@
 package com.pineapple.veritas.entity;
 
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,14 +9,8 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@TableName("records")
-public class Record {
-  private String recordId;
+@TableName("organizations")
+public class Organization {
   private String orgId;
-  private String userId;
-  private String flaggedText;
+  private String password;
 }
-
-
-
-

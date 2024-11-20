@@ -90,26 +90,14 @@ public class VeritasService {
 
     Boolean flagged = textRes.getBody();
 
-    Map<String, Object> recordMap = new HashMap<>();
-    recordMap.put("orgID", orgId);
-    recordMap.put("userID", userId);
-    List<Record> records = recordMapper.selectByMap(recordMap);
-    if (records.isEmpty()) {
+    if (Boolean.TRUE.equals(flagged)) {
       Record record = new Record();
-      record.setOrgId(orgId);
+      record.setFlaggedText(text);
       record.setUserId(userId);
-      if (Boolean.TRUE.equals(flagged)) {
-        record.setNumFlags(1);
-      } else {
-        record.setNumFlags(0);
-      }
+      record.setOrgId(orgId);
       recordMapper.insert(record);
-    } else if (Boolean.TRUE.equals(flagged)) {
-      Record record = records.get(0);
-      record.setNumFlags(record.getNumFlags() + 1);
-      recordMapper.updateByCompositeKey(record.getUserId(),
-          record.getOrgId(), record.getNumFlags());
     }
+
     return new ResponseEntity<>("Operation completed successfully", HttpStatus.OK);
   }
 
@@ -128,8 +116,7 @@ public class VeritasService {
     if (records.isEmpty()) {
       return new ResponseEntity<>(0, HttpStatus.OK);
     } else {
-      Record record = records.get(0);
-      return new ResponseEntity<>(record.getNumFlags(), HttpStatus.OK);
+      return new ResponseEntity<>(records.size(), HttpStatus.OK);
     }
   }
 }
