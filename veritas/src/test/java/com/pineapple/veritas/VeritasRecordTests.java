@@ -22,9 +22,20 @@ public class VeritasRecordTests {
   @BeforeEach
   public void setupRecordForTesting() {
     testRecord = new Record();
+    testRecord.setRecordId("Record");
     testRecord.setOrgId("Org");
     testRecord.setUserId("User");
-    testRecord.setNumFlags(1);
+    testRecord.setFlaggedText("Hi");
+  }
+
+  @Test
+  public void recordIdTest() {
+    assertEquals("Record", testRecord.getRecordId());
+  }
+
+  @Test
+  public void flaggedTextTest() {
+    assertEquals("Hi", testRecord.getFlaggedText());
   }
 
   @Test
@@ -35,11 +46,6 @@ public class VeritasRecordTests {
   @Test
   public void userIdTest() {
     assertEquals("User", testRecord.getUserId());
-  }
-
-  @Test
-  public void numFlagsTest() {
-    assertEquals(1, testRecord.getNumFlags());
   }
 
   public static Record testRecord;

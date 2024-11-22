@@ -180,7 +180,6 @@ public class VeritasServiceTests {
     Record mockRecord = new Record();
     mockRecord.setUserId("Some User");
     mockRecord.setOrgId("Some Org");
-    mockRecord.setNumFlags(1);
     when(recordMapper.selectByMap(any())).thenReturn(Collections.singletonList(mockRecord));
 
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
@@ -210,12 +209,10 @@ public class VeritasServiceTests {
   @Test
   public void testNumFlags() {
     Record mockRecord = new Record();
-    mockRecord.setNumFlags(42);
     when(recordMapper.selectByMap(any())).thenReturn(List.of(mockRecord));
 
     ResponseEntity<?> response = veritasService.numFlags("Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(42, response.getBody());
   }
-
 }
