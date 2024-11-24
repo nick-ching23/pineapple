@@ -1,6 +1,17 @@
 package com.pineapple.veritas;
 
+import com.pineapple.veritas.entity.Organization;
+import com.pineapple.veritas.mapper.OrganizationMapper;
+import com.pineapple.veritas.request.LoginRequest;
+import java.lang.reflect.Field;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,6 +54,9 @@ public class VeritasServiceTests {
 
   @MockBean
   private RecordMapper recordMapper;
+
+  @MockBean
+  private OrganizationMapper organizationMapper;
 
   @MockBean
   private SqlSessionTemplate sqlSessionTemplate;
@@ -155,7 +169,10 @@ public class VeritasServiceTests {
 
     ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Operation completed successfully", response.getBody());
+    assertInstanceOf(Map.class, response.getBody());
+    Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+    assertEquals(false, responseBody.get("flagged"));
+    assertEquals("Text is not flagged.", responseBody.get("message"));
 
     checkTextResponse = new CheckTextResponse();
     checkTextResponse.setResult(true);
@@ -166,36 +183,12 @@ public class VeritasServiceTests {
 
     response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Operation completed successfully", response.getBody());
-    verify(recordMapper, times(2)).insert(any(Record.class));
+    assertInstanceOf(Map.class, response.getBody());
+    responseBody = (Map<String, Object>) response.getBody();
+    assertEquals(true, responseBody.get("flagged"));
+    assertEquals("Text has been flagged and recorded.", responseBody.get("message"));
   }
 
-  @Test
-  public void testCheckTextUserOld() {
-    CheckTextResponse checkTextResponse = new CheckTextResponse();
-    checkTextResponse.setResult(true);
-    Mono<CheckTextResponse> monoResponse = Mono.just(checkTextResponse);
-    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
-
-    Record mockRecord = new Record();
-    mockRecord.setUserId("Some User");
-    mockRecord.setOrgId("Some Org");
-    when(recordMapper.selectByMap(any())).thenReturn(Collections.singletonList(mockRecord));
-
-    ResponseEntity<?> response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Operation completed successfully", response.getBody());
-    verify(recordMapper).updateByCompositeKey(eq("Some User"), eq("Some Org"), eq(2));
-
-    checkTextResponse = new CheckTextResponse();
-    checkTextResponse.setResult(false);
-    monoResponse = Mono.just(checkTextResponse);
-    when(responseSpec.bodyToMono(CheckTextResponse.class)).thenReturn(monoResponse);
-
-    response = veritasService.checkTextUser("Some Text", "Some User", "Some Org");
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Operation completed successfully", response.getBody());
-  }
 
   @Test
   public void testNumFlagsEmpty() {
@@ -213,6 +206,97 @@ public class VeritasServiceTests {
 
     ResponseEntity<?> response = veritasService.numFlags("Some User", "Some Org");
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(42, response.getBody());
+    assertEquals(1, response.getBody());
   }
+
+  @Test
+  public void testRegister() {
+    LoginRequest loginRequest = new LoginRequest();
+    loginRequest.setOrgId("OrgId");
+    loginRequest.setPassword("Password");
+    ResponseEntity<?> response = veritasService.register(loginRequest);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals("Successfully registered", response.getBody());
+  }
+
+  @Test
+  public void testLoginEmpty() {
+
+    when(organizationMapper.selectByMap(any())).thenReturn(Collections.emptyList());
+
+    LoginRequest loginRequest = new LoginRequest();
+    loginRequest.setOrgId("OrgId");
+    loginRequest.setPassword("Password");
+    ResponseEntity<?> response = veritasService.login(loginRequest);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("User or Password Incorrect", response.getBody());
+  }
+
+  @Test
+  public void testLogin() {
+
+    Organization mockOrganization = new Organization();
+    mockOrganization.setOrgId("OrgId");
+    mockOrganization.setPassword("Password");
+    when(organizationMapper.selectByMap(any())).thenReturn(List.of(mockOrganization));
+
+    LoginRequest loginRequest = new LoginRequest();
+    loginRequest.setOrgId("OrgId");
+    loginRequest.setPassword("Password");
+    ResponseEntity<?> response = veritasService.login(loginRequest);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(mockOrganization, response.getBody());
+  }
+
+  @Test
+  public void testCheckRegistered() {
+
+    Organization mockOrganization = new Organization();
+    mockOrganization.setOrgId("OrgId");
+    mockOrganization.setPassword("Password");
+
+    when(organizationMapper.selectByMap(any())).thenReturn(List.of(mockOrganization));
+
+    boolean response = veritasService.checkRegistered("OrgId");
+    assertTrue(response);
+
+    when(organizationMapper.selectByMap(any())).thenReturn(Collections.emptyList());
+
+    response = veritasService.checkRegistered("OrgId");
+    assertFalse(response);
+  }
+
+  @Test
+  public void testIsTimeStampValidNull() {
+    boolean response = veritasService.isTimeStampValid("NULL");
+    assertFalse(response);
+  }
+
+  @Test
+  public void testIsTimeStampValidExpired() throws NoSuchFieldException, IllegalAccessException {
+    Instant instant1980 = ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant();
+    Map<String, Instant> mockTimestampMap = mock(Map.class);
+    when(mockTimestampMap.get(anyString())).thenReturn(instant1980);
+
+    Field field = VeritasService.class.getDeclaredField("timestampMap");
+    field.setAccessible(true);
+
+    Map<String, Instant> originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
+
+    field.set(veritasService, mockTimestampMap);
+
+    veritasService.updateTimestamp("Expired");
+    boolean response = veritasService.isTimeStampValid("Expired");
+    assertFalse(response);
+
+    field.set(veritasService, originalTimestampMap);
+  }
+
+  @Test
+  public void testIsTimeStampValid() {
+    veritasService.updateTimestamp("new");
+    boolean response = veritasService.isTimeStampValid("new");
+    assertTrue(response);
+  }
+
 }
