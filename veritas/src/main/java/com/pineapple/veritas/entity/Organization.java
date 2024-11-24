@@ -10,15 +10,9 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@TableName("records")
-public class Record {
+@TableName("organizations")
+public class Organization {
   @TableId
-  private String recordId;
   private String orgId;
-  private String userId;
-  private String flaggedText;
+  private String password;
 }
-
-
-
-

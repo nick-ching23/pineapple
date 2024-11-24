@@ -1,9 +1,13 @@
 package com.pineapple.veritas.service;
 
+import com.pineapple.veritas.entity.Organization;
 import com.pineapple.veritas.entity.Record;
+import com.pineapple.veritas.mapper.OrganizationMapper;
 import com.pineapple.veritas.mapper.RecordMapper;
+import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.response.CheckTextResponse;
 import java.net.URI;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,11 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class VeritasService {
   @Autowired
   RecordMapper recordMapper;
+
+  @Autowired
+  OrganizationMapper orgMapper;
+
+  private final Map<String, Instant> timestampMap = new HashMap<>();
 
   @Autowired
   private WebClient.Builder webClientBuilder;
@@ -90,27 +99,22 @@ public class VeritasService {
 
     Boolean flagged = textRes.getBody();
 
-    Map<String, Object> recordMap = new HashMap<>();
-    recordMap.put("orgID", orgId);
-    recordMap.put("userID", userId);
-    List<Record> records = recordMapper.selectByMap(recordMap);
-    if (records.isEmpty()) {
+    if (Boolean.TRUE.equals(flagged)) {
       Record record = new Record();
-      record.setOrgId(orgId);
+      record.setFlaggedText(text);
       record.setUserId(userId);
-      if (Boolean.TRUE.equals(flagged)) {
-        record.setNumFlags(1);
-      } else {
-        record.setNumFlags(0);
-      }
+      record.setOrgId(orgId);
       recordMapper.insert(record);
-    } else if (Boolean.TRUE.equals(flagged)) {
-      Record record = records.get(0);
-      record.setNumFlags(record.getNumFlags() + 1);
-      recordMapper.updateByCompositeKey(record.getUserId(),
-          record.getOrgId(), record.getNumFlags());
+      return ResponseEntity.ok(Map.of(
+          "flagged", true,
+          "message", "Text has been flagged and recorded."
+      ));
+    } else {
+      return ResponseEntity.ok(Map.of(
+          "flagged", false,
+          "message", "Text is not flagged."
+      ));
     }
-    return new ResponseEntity<>("Operation completed successfully", HttpStatus.OK);
   }
 
   /**
@@ -128,8 +132,55 @@ public class VeritasService {
     if (records.isEmpty()) {
       return new ResponseEntity<>(0, HttpStatus.OK);
     } else {
-      Record record = records.get(0);
-      return new ResponseEntity<>(record.getNumFlags(), HttpStatus.OK);
+      return new ResponseEntity<>(records.size(), HttpStatus.OK);
     }
+  }
+
+  public ResponseEntity<?> register(LoginRequest loginRequest) {
+    Organization org = new Organization();
+    org.setOrgId(loginRequest.getOrgId());
+    org.setPassword(loginRequest.getPassword());
+    orgMapper.insert(org);
+    return new ResponseEntity<>("Successfully registered", HttpStatus.OK);
+  }
+
+  public ResponseEntity<?> login(LoginRequest loginRequest) {
+    Map<String, Object> loginMap = new HashMap<>();
+    loginMap.put("orgId", loginRequest.getOrgId());
+    loginMap.put("password", loginRequest.getPassword());
+    List<Organization> orgs = orgMapper.selectByMap(loginMap);
+    if (orgs.isEmpty()) {
+      return new ResponseEntity<>("User or Password Incorrect", HttpStatus.BAD_REQUEST);
+    }
+    updateTimestamp(loginRequest.getOrgId());
+    return new ResponseEntity<>(orgs.get(0), HttpStatus.OK);
+  }
+
+  public void updateTimestamp(String orgId) {
+    timestampMap.put(orgId, Instant.now());
+  }
+
+  public boolean checkRegistered(String orgId) {
+    Map<String, Object> loginMap = new HashMap<>();
+    loginMap.put("orgId", orgId);
+    List<Organization> orgs = orgMapper.selectByMap(loginMap);
+    return !orgs.isEmpty();
+  }
+
+  public boolean isTimeStampValid(String orgId) {
+    Instant lastLogin = timestampMap.get(orgId);
+    if (lastLogin == null) {
+      return false;
+    }
+
+    Instant now = Instant.now();
+    long hoursElapsed = java.time.Duration.between(lastLogin, now).toHours();
+
+    if (hoursElapsed >= 24) {
+      timestampMap.remove(orgId);
+      return false;
+    }
+
+    return true;
   }
 }
