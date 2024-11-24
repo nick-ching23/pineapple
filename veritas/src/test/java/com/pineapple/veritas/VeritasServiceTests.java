@@ -274,6 +274,8 @@ public class VeritasServiceTests {
 
   @Test
   public void testIsTimeStampValidExpired() throws NoSuchFieldException, IllegalAccessException {
+    Map<String, Instant> originalTimestampMap;
+
     Instant instant1980 = ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant();
     Map<String, Instant> mockTimestampMap = mock(Map.class);
     when(mockTimestampMap.get(anyString())).thenReturn(instant1980);
@@ -281,13 +283,13 @@ public class VeritasServiceTests {
     Field field = VeritasService.class.getDeclaredField("timestampMap");
     field.setAccessible(true);
 
+    originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
     field.set(veritasService, mockTimestampMap);
 
     veritasService.updateTimestamp("Expired");
     boolean response = veritasService.isTimeStampValid("Expired");
     assertFalse(response);
 
-    Map<String, Instant> originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
     field.set(veritasService, originalTimestampMap);
   }
 
