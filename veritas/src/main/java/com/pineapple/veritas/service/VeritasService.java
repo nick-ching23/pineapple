@@ -136,6 +136,12 @@ public class VeritasService {
     }
   }
 
+  /**
+   * Register a new organisation (insert org ID and password into the table).
+   *
+   * @param loginRequest Contains the org ID and password
+   * @return Http response indicating successful registration
+   */
   public ResponseEntity<?> register(LoginRequest loginRequest) {
     Organization org = new Organization();
     org.setOrgId(loginRequest.getOrgId());
@@ -144,6 +150,12 @@ public class VeritasService {
     return new ResponseEntity<>("Successfully registered", HttpStatus.OK);
   }
 
+  /**
+   * Log into a session for a particular organisation.
+   *
+   * @param loginRequest Contains the loginRequest org ID and password
+   * @return Http response indicating whether the login attempt was successful or not
+   */
   public ResponseEntity<?> login(LoginRequest loginRequest) {
     Map<String, Object> loginMap = new HashMap<>();
     loginMap.put("orgId", loginRequest.getOrgId());
@@ -160,6 +172,12 @@ public class VeritasService {
     timestampMap.put(orgId, Instant.now());
   }
 
+  /**
+   * Check if the organisation has been registered or not.
+   *
+   * @param orgId The organisation to check
+   * @return Boolean (true if registered, false if not)
+   */
   public boolean checkRegistered(String orgId) {
     Map<String, Object> loginMap = new HashMap<>();
     loginMap.put("orgId", orgId);
@@ -167,6 +185,13 @@ public class VeritasService {
     return !orgs.isEmpty();
   }
 
+  /**
+   * Check if the session for an organisation is still active
+   * (i.e. if the last login attempt was less than 24 hours ago)
+   *
+   * @param orgId The organisation to check
+   * @return Boolean (true if session is active, false if not)
+   */
   public boolean isTimeStampValid(String orgId) {
     Instant lastLogin = timestampMap.get(orgId);
     if (lastLogin == null) {

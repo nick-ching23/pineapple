@@ -1,13 +1,5 @@
 package com.pineapple.veritas;
 
-import com.pineapple.veritas.entity.Organization;
-import com.pineapple.veritas.mapper.OrganizationMapper;
-import com.pineapple.veritas.request.LoginRequest;
-import java.lang.reflect.Field;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -20,13 +12,21 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.pineapple.veritas.entity.Organization;
 import com.pineapple.veritas.entity.Record;
+import com.pineapple.veritas.mapper.OrganizationMapper;
 import com.pineapple.veritas.mapper.RecordMapper;
+import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.response.CheckTextResponse;
 import com.pineapple.veritas.service.VeritasService;
+import java.lang.reflect.Field;
 import java.net.URI;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -281,14 +281,13 @@ public class VeritasServiceTests {
     Field field = VeritasService.class.getDeclaredField("timestampMap");
     field.setAccessible(true);
 
-    Map<String, Instant> originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
-
     field.set(veritasService, mockTimestampMap);
 
     veritasService.updateTimestamp("Expired");
     boolean response = veritasService.isTimeStampValid("Expired");
     assertFalse(response);
 
+    Map<String, Instant> originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
     field.set(veritasService, originalTimestampMap);
   }
 

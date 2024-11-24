@@ -1,8 +1,5 @@
 package com.pineapple.veritas;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pineapple.veritas.mapper.OrganizationMapper;
-import com.pineapple.veritas.request.LoginRequest;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,8 +7,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pineapple.veritas.controller.VeritasController;
+import com.pineapple.veritas.mapper.OrganizationMapper;
 import com.pineapple.veritas.mapper.RecordMapper;
+import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.service.VeritasService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -165,8 +165,10 @@ public class VeritasControllerTests {
 
   @Test
   public void testRegister() throws Exception {
-    ResponseEntity<String> response = new ResponseEntity<>("Successfully registered", HttpStatus.OK);
-    Mockito.<ResponseEntity<?>>when(veritasService.register(Mockito.any(LoginRequest.class))).thenReturn(response);
+    ResponseEntity<String> response = new ResponseEntity<>(
+            "Successfully registered", HttpStatus.OK);
+    Mockito.<ResponseEntity<?>>when(
+            veritasService.register(Mockito.any(LoginRequest.class))).thenReturn(response);
 
     LoginRequest loginRequest = new LoginRequest();
     String loginRequestJson = objectMapper.writeValueAsString(loginRequest);
@@ -181,7 +183,8 @@ public class VeritasControllerTests {
   @Test
   public void testLogin() throws Exception {
     ResponseEntity<String> response = new ResponseEntity<>("OK", HttpStatus.OK);
-    Mockito.<ResponseEntity<?>>when(veritasService.login(Mockito.any(LoginRequest.class))).thenReturn(response);
+    Mockito.<ResponseEntity<?>>when(
+            veritasService.login(Mockito.any(LoginRequest.class))).thenReturn(response);
 
     LoginRequest loginRequest = new LoginRequest();
     String loginRequestJson = objectMapper.writeValueAsString(loginRequest);
