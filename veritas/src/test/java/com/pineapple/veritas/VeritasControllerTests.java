@@ -76,8 +76,6 @@ public class VeritasControllerTests {
 
   @Test
   public void testCheckTextUserNotRegistered() throws Exception {
-    ResponseEntity<Integer> response = new ResponseEntity<>(1, HttpStatus.OK);
-
     mockMvc.perform(post("/checkTextUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content("\"Sample text\"")
@@ -89,9 +87,7 @@ public class VeritasControllerTests {
 
   @Test
   public void testCheckTextUserNotValid() throws Exception {
-    ResponseEntity<Integer> response = new ResponseEntity<>(1, HttpStatus.OK);
     Mockito.when(veritasService.checkRegistered(anyString())).thenReturn(true);
-
     mockMvc.perform(post("/checkTextUser")
             .contentType(MediaType.APPLICATION_JSON)
             .content("\"Sample text\"")
