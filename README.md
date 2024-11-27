@@ -14,6 +14,7 @@ Veritas is a lightweight and flexible service that abstracts the task of detecti
 
 
 ## **Current Progress**
+  - **27 Nov 2024:** Added login functionality and finalized endpoints for Vertias Service! 
   - **18 Oct 2024:** Completed development of Vertias service (including Java API controller, DB handlers and Python Microservice)
 
 
@@ -92,6 +93,9 @@ or the underlying checkText call errs out)</li>
   <li>Expected Parameters: String userId, String orgId</li>
   <li>Expected Output: HTTP OK, with the number of flags (int)</li>
 </details>
+
+Note: we have incorporated login functionality. Each valid user and organization will need to re-enter their credentials every 24 hours. This check has been integrated into each of our endpoints.
+
 
 ## **Running Tests**
 Run `mvn test` on the command line from the `veritas` directory. As of now, this runs 18 tests with high branch coverage. We have 3 suites of unit tests for the `VeritasController`, `VeritasRecord` and `VeritasService` classes.
