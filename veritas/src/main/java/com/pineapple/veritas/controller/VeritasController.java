@@ -1,7 +1,5 @@
 package com.pineapple.veritas.controller;
 
-import com.pineapple.veritas.entity.Organization;
-import com.pineapple.veritas.mapper.OrganizationMapper;
 import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.service.VeritasService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Route controller for the Veritas service.
@@ -67,11 +61,11 @@ public class VeritasController {
                                          @RequestParam String orgId) {
     try {
       if (!veritasService.checkRegistered(orgId)) {
-        return new ResponseEntity<> ("Please register first", HttpStatus.OK);
+        return new ResponseEntity<>("Please register first", HttpStatus.OK);
       }
 
       if (!veritasService.isTimeStampValid(orgId)) {
-        return new ResponseEntity<> ("Session expired, please login again", HttpStatus.OK);
+        return new ResponseEntity<>("Session expired, please login again", HttpStatus.OK);
       }
       veritasService.updateTimestamp(orgId);
       return veritasService.checkTextUser(text, userId, orgId);
@@ -92,11 +86,11 @@ public class VeritasController {
                                     @RequestParam String orgId) {
     try {
       if (!veritasService.checkRegistered(orgId)) {
-        return new ResponseEntity<> ("Please register first", HttpStatus.OK);
+        return new ResponseEntity<>("Please register first", HttpStatus.OK);
       }
 
       if (!veritasService.isTimeStampValid(orgId)) {
-        return new ResponseEntity<> ("Session expired, please login again", HttpStatus.OK);
+        return new ResponseEntity<>("Session expired, please login again", HttpStatus.OK);
       }
       veritasService.updateTimestamp(orgId);
       return veritasService.numFlags(userId, orgId);
@@ -105,6 +99,9 @@ public class VeritasController {
     }
   }
 
+  /**
+   * Register a new organisation.
+   */
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody LoginRequest loginRequest) {
     try {

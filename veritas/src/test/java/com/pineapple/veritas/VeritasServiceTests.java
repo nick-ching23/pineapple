@@ -1,32 +1,29 @@
 package com.pineapple.veritas;
 
-import com.pineapple.veritas.entity.Organization;
-import com.pineapple.veritas.mapper.OrganizationMapper;
-import com.pineapple.veritas.request.LoginRequest;
-import java.lang.reflect.Field;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.pineapple.veritas.entity.Organization;
 import com.pineapple.veritas.entity.Record;
+import com.pineapple.veritas.mapper.OrganizationMapper;
 import com.pineapple.veritas.mapper.RecordMapper;
+import com.pineapple.veritas.request.LoginRequest;
 import com.pineapple.veritas.response.CheckTextResponse;
 import com.pineapple.veritas.service.VeritasService;
+import java.lang.reflect.Field;
 import java.net.URI;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -274,6 +271,8 @@ public class VeritasServiceTests {
 
   @Test
   public void testIsTimeStampValidExpired() throws NoSuchFieldException, IllegalAccessException {
+    Map<String, Instant> originalTimestampMap;
+
     Instant instant1980 = ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant();
     Map<String, Instant> mockTimestampMap = mock(Map.class);
     when(mockTimestampMap.get(anyString())).thenReturn(instant1980);
@@ -281,8 +280,7 @@ public class VeritasServiceTests {
     Field field = VeritasService.class.getDeclaredField("timestampMap");
     field.setAccessible(true);
 
-    Map<String, Instant> originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
-
+    originalTimestampMap = (Map<String, Instant>) field.get(veritasService);
     field.set(veritasService, mockTimestampMap);
 
     veritasService.updateTimestamp("Expired");
