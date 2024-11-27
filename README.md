@@ -14,6 +14,7 @@ Veritas is a lightweight and flexible service that abstracts the task of detecti
 
 
 ## **Current Progress**
+  - **27 Nov 2024:** Revised API routes and added registering functionality for Veritas API. 
   - **18 Oct 2024:** Completed development of Vertias service (including Java API controller, DB handlers and Python Microservice)
 
 
