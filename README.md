@@ -100,10 +100,17 @@ Note: we have incorporated login functionality. Each valid user and organization
 ## **Running Tests**
 Run `mvn test` on the command line from the `veritas` directory. As of now, this runs 18 tests with high branch coverage. We have 3 suites of unit tests for the `VeritasController`, `VeritasRecord` and `VeritasService` classes.
 
+## **Static Code Analysis**
+
+We use pmd as our static bug finder. Run `mvn pmd::check` from the `veritas` directory. Here is the report
+as of the day of 11/28/2024 (These can be found in the reports folder):
+
+![PMD](reports/pmd.png)
+
 ## **Style Check Report** 
 
 We used the tool "checkstyle" to check the style of our code and generate style checking reports. Run `mvn checkstyle:check` from the `veritas` directory. Here is the report
-as of the day of 10/18/2024 (These can be found in the reports folder):
+as of the day of 11/28/2024 (These can be found in the reports folder):
 
 ![Checkstyle](reports/checkstyle.png)
 
@@ -120,6 +127,7 @@ We used JaCoCo to perform branch analysis in order to see the branch coverage of
  - GitHub Actions CI: Current workflow runs a Maven build + tests to make sure pushed code doesn't break
  - Checkstyle: Style checking
  - JUnit: Unit testing
+ - PMD: Static Code Analysis
  - Mybatis Mapper: Allows us to perform SQL queries by specifying a Java map.
  - JaCoCo: Code coverage report generation
  - Postman: API testing
