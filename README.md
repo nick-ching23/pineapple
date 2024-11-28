@@ -101,7 +101,7 @@ Run `mvn test` on the command line from the `veritas` directory. As of now, this
 We used the tool "checkstyle" to check the style of our code and generate style checking reports. Run `mvn checkstyle:check` from the `veritas` directory. Here is the report
 as of the day of 10/18/2024 (These can be found in the reports folder):
 
-![Checkstyle](reports/checkstyle_10182024.png)
+![Checkstyle](reports/checkstyle.png)
 
 ## **Branch Coverage Reporting**
 
