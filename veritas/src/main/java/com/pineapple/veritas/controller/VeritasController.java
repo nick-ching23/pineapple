@@ -104,6 +104,9 @@ public class VeritasController {
    */
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody LoginRequest loginRequest) {
+    if (veritasService.checkRegistered(loginRequest.getOrgId())) {
+      return new ResponseEntity<>("Organization already registered", HttpStatus.OK);
+    }
     try {
       return veritasService.register(loginRequest);
     } catch (Exception e) {
