@@ -94,6 +94,23 @@ or the underlying checkText call errs out)</li>
   <li>Expected Output: HTTP OK, with the number of flags (int)</li>
 </details>
 
+<details>
+<summary>POST: /register</summary>
+  <li>Purpose: Register a new organization</li>
+  <li>Expected Parameters: LoginRequest loginRequest -- an object containing an orgId and password.</li>
+  <li>Expected Output: HTTP OK Status with a boolean showing if the organization has been successfully registered</li>
+  <li>Upon Failure: HTTP Bad Request or Internal Server Error</li>
+</details>
+
+<details>
+<summary>POST: /login</summary>
+  <li>Purpose: Log a current organiztion in</li>
+  <li>Expected Parameters: LoginRequest loginRequest -- an object containing an orgId and password.</li>
+  <li>Expected Output: HTTP OK Status with a boolean showing if the organization has been successfully logged in or not</li>
+  <li>Upon Failure: HTTP Bad Request or Internal Server Error showing the user has failed to enter the correct orgId or password</li>
+</details>
+
+
 Note: we have incorporated login functionality. Each valid user and organization will need to re-enter their credentials every 24 hours. This check has been integrated into each of our endpoints.
 
 
