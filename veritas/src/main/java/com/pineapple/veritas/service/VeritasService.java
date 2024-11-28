@@ -38,6 +38,8 @@ public class VeritasService {
   @Value("${external.api.url}")
   private String modelUrl;
 
+  private static final int HOURS_IN_A_DAY = 24;
+
   /**
    * Determines if the provided text may have been created using generative AI. This is done by
    * sending and waiting for the response from a separate request to a python flask endpoint
@@ -201,7 +203,7 @@ public class VeritasService {
     Instant now = Instant.now();
     long hoursElapsed = java.time.Duration.between(lastLogin, now).toHours();
 
-    if (hoursElapsed >= 24) {
+    if (hoursElapsed >= HOURS_IN_A_DAY) {
       timestampMap.remove(orgId);
       return false;
     }
