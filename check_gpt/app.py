@@ -9,7 +9,6 @@ client = OpenAI()
 # calls ChatGPT API with given prompt.
 def get_chatgpt_response(prompt: str) -> str:
     
-    
     completion = client.chat.completions.create(
     model="gpt-4o",
     messages=[
@@ -63,8 +62,6 @@ def analyze_texts(original_text: str, paraphrased_text: str, ratio_threshold=0.6
     for text in rewrites: 
         intermediate_ratios += levenshtein_ratio(original_text, text)
     
-    
-    
     ratio = intermediate_ratios/number_rewrites
     return True if ratio > ratio_threshold else False
 
@@ -74,11 +71,13 @@ def analyze_texts(original_text: str, paraphrased_text: str, ratio_threshold=0.6
 # Main function to compare the original text and check if AI-generated
 def execute_gpt_comparsion(original_text:str) -> bool: 
     """
-    Return True if written by a human 
-    Return False if written by ChatGPT
+    Return True if written by AI 
+    Return False if written by human
     """
     
-    
+    gpt_generated = analyze_texts(original_text, "")
+    return gpt_generated
+
 
 @app.route('/')
 def index():
